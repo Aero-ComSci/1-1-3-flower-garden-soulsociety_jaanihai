@@ -3,11 +3,51 @@ import random
 import re
 from collections import defaultdict
 
+def draw_tulip(t):
+    t.speed(0)
+
+    t.penup()
+    t.goto(0, -150)
+    t.pendown()
+    t.color("green")
+    t.setheading(90)
+    t.forward(100)
+
+    t.left(30)
+    t.color("green")
+    t.begin_fill()
+    t.circle(30, 90)
+    t.left(90)
+    t.circle(30, 90)
+    t.end_fill()
+    
+    t.penup()
+    t.goto(0, -30)
+    t.setheading(0)
+    t.pendown()
+   
+    t.color("red")
+    for _ in range(3):
+        t.begin_fill()
+        t.circle(40, 60)
+        t.left(120)
+        t.circle(40, 60)
+        t.end_fill()
+        t.left(120)
+
+    t.penup()
+    t.goto(0, -10)
+    t.pendown()
+    t.color("yellow")
+    t.begin_fill()
+    t.circle(10)
+    t.end_fill()
+
 
 def draw_sunflower(t):
     t.speed(0)
     
-    t.color(flower_color)
+    t.color("yellow")  
     t.penup()
     t.right(90)
     t.forward(10)
@@ -20,19 +60,20 @@ def draw_sunflower(t):
         t.circle(70, 60)
         t.right(30)
 
-
 def draw_rose(t):
     t.speed(0)
-    t.color(flower_color)
-    
+    t.color("red")  
+
+    size = 25
     t.penup()
     t.setheading(0)
     t.pendown()
-    
-    for i in range(50):
-        t.circle(i * 2, 60) 
-        t.left(60)
 
+    for i in range(40):  
+        t.circle(size, 100)  
+        t.left(90)  
+        t.circle(size, 100)
+        t.left(60)  
 
 def draw_daisy(t):
     t.speed(0)
@@ -42,7 +83,7 @@ def draw_daisy(t):
     t.circle(20)
     t.end_fill()
     
-    t.color(flower_color)
+    t.color("white")  
     t.penup()
     t.left(90)
     t.forward(30)
@@ -50,30 +91,14 @@ def draw_daisy(t):
     t.pendown()
 
     for _ in range(12):
-        t.circle(60, 60)
+        t.circle(60, 60)    
         t.left(120)
         t.circle(60, 60)
         t.right(30)
 
-
-def draw_tulip(t):
-    t.speed(0)
-    t.color(flower_color)
-    
-    
-    t.begin_fill()
-    t.circle(40, 180)  
-    t.left(90)
-    
-    for _ in range(2):
-        t.circle(40, 90)
-        t.left(90)
-    t.end_fill()
-
-
 def draw_lily(t):
     t.speed(0)
-    t.color(flower_color)
+    t.color("white")  
     
     for _ in range(6):
         t.begin_fill()
@@ -83,11 +108,9 @@ def draw_lily(t):
         t.end_fill()
         t.left(60)
 
-
 flower_types = ['sunflower', 'rose', 'daisy', 'tulip', 'lily']
-colors = ['red', 'yellow', 'blue', 'green', 'white', 'purple', 'orange', 'pink', 'black']
 
-def extract_info(sentence):
+def tokenize(sentence):
     number_words = {
         'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6,
         'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10
@@ -108,36 +131,23 @@ def extract_info(sentence):
             info['flower_type'] = flower
             break
 
-    for color in colors:
-        if color in sentence.lower():
-            info['flower_color'] = color
-            break
-
-    for color in colors:
-        if f"background {color}" in sentence.lower():
-            info['bg_color'] = color
-            break
-
     return info
 
 def get_user_input():
     user_input = input(
-        "Describe what you want (e.g., 'I want 3 yellow sunflowers'): "
+        "Describe what you want (e.g., 'I want 3 sunflowers'): "
     )
 
-    info = extract_info(user_input)
+    info = tokenize(user_input)
 
     num_flowers = info['num_flowers'] or 1  
     flower_type = info['flower_type'] or 'sunflower' 
-    global flower_color
-    flower_color = info['flower_color'] or 'yellow' 
-    bg_color = info['bg_color'] or 'white'  
 
-    return num_flowers, flower_type, flower_color, bg_color
+    return num_flowers, flower_type
 
-def setup_turtle(bg_color):
+def setup_turtle():
     screen = turtle.Screen()
-    screen.bgcolor(bg_color)
+    screen.bgcolor("white") 
     t = turtle.Turtle()
     t.speed(10)
     return t
@@ -150,8 +160,7 @@ def position_turtle(t):
     t.pendown()
 
 def main():
-    global flower_color
-    num_flowers, flower_type, flower_color, bg_color = get_user_input()
+    num_flowers, flower_type = get_user_input()
 
     flower_functions = {
         'sunflower': draw_sunflower,
@@ -161,7 +170,7 @@ def main():
         'lily': draw_lily
     }
 
-    t = setup_turtle(bg_color)
+    t = setup_turtle()
 
     for _ in range(num_flowers):
         position_turtle(t)
