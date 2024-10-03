@@ -112,24 +112,27 @@ flower_types = ['sunflower', 'rose', 'daisy', 'tulip', 'lily']
 
 def tokenize(sentence):
     number_words = {
-        'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5, 'six': 6,
-        'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10
+        'one': 1, 'two': 2, 'three': 3, 'four': 4, 'five': 5,
+        'six': 6, 'seven': 7, 'eight': 8, 'nine': 9, 'ten': 10
     }
 
+    flower_types = ['rose', 'lily', 'tulip', 'daisy', 'sunflower'] 
     info = defaultdict(lambda: None)
 
-    match = re.search(r'\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\b', sentence.lower())
-    if match:
-        num_flowers_str = match.group(0)
-        if num_flowers_str.isdigit():
-            info['num_flowers'] = int(float(num_flowers_str))
-        else:
-            info['num_flowers'] = number_words.get(num_flowers_str, 1)
+    sentence_lower = sentence.lower()
 
     for flower in flower_types:
-        if flower in sentence.lower():
-            info['flower_type'] = flower
-            break
+        flower_pattern = r'\b(\d+|one|two|three|four|five|six|seven|eight|nine|ten)\s+' + re.escape(flower)
+        match = re.search(flower_pattern, sentence_lower)
+        
+        if match:
+            num_flowers_str = match.group(1)
+            if num_flowers_str.isdigit():
+                info['num_flowers'] = int(num_flowers_str)
+            else:
+                info['num_flowers'] = number_words.get(num_flowers_str, 1)
+            info['flower_type'] = flower  
+            break  
 
     return info
 
